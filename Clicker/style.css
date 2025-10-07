@@ -8,7 +8,8 @@
 
 body {
   margin: 0;
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
   color: var(--text);
   background: linear-gradient(135deg, var(--bg1), var(--bg2));
   min-height: 100vh;
@@ -53,8 +54,8 @@ button {
 #pseudoForm {
   display: grid;
   place-items: center;
-  gap: 8px;
-  padding: 12px;
+  gap: 10px;
+  padding: 100px;
 }
 
 #gameArea {
