@@ -222,8 +222,24 @@ button {
   height: 150px;
   object-fit: contain;
   user-select: none;
-  transition: transform 0.2s ease;
+  transition: transform 160ms cubic-bezier(.2,.9,.2,1), opacity 220ms ease;
 }
+
+/* CPS indicator */
+.cps-indicator {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(0,0,0,0.4);
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-weight: 800;
+}
+
+.volume-controls { display:none; }
+
+/* small confetti placeholder */
+.confetti { position: absolute; pointer-events:none; }
 
 /* Thèmes */
 .theme-default { --bg1: #6e8efb; --bg2: #a777e3; --accent: #ffcc00; }
