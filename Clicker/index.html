@@ -8,11 +8,16 @@
 </head>
 <body>
   <header>
+    <div id="bonusPopup" class="bonus-popup" style="display:none;"></div>
     <h1>🎯 Clicker Ultime</h1>
     <div class="controls">
       <label class="toggle">
         <input type="checkbox" id="musicToggle" />
         <span>Musique</span>
+        <label class="toggle">
+          <span>Volume</span>
+            <input type="range" id="volumeSlider" min="0" max="100" value="50" />
+          </label>
       </label>
       <label class="toggle">
         <input type="checkbox" id="soundToggle" checked />
@@ -91,9 +96,7 @@
     </section>
 
     <section id="events">
-      <div id="bonusButton" class="bonus" style="display:none;">🎁 Bonus!</div>
       <div id="achievementToast" class="toast" style="display:none;"></div>
-      <div id="bonusPopup" class="bonus-popup" style="display:none;"></div>
     </section>
 
     <section id="achievements">
@@ -108,10 +111,10 @@
   </main>
 
   <!-- Audio -->
-  <audio id="clickSound" src="https://www.soundjay.com/button/sounds/button-29.mp3" preload="auto"></audio>
+  <audio id="clickSound" src="song/Item Pickup Pokémon Black #pokemon #soundeffects #shorts.mp3" preload="auto"></audio>
   <audio id="critSound" src="https://www.soundjay.com/button/sounds/button-16.mp3" preload="auto"></audio>
   <audio id="achievementSound" src="https://www.soundjay.com/button/sounds/button-30.mp3" preload="auto"></audio>
-  <audio id="music" src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_13a8bb3a88.mp3?filename=chill-ambient-12462.mp3" preload="auto" loop></audio>
+  <audio id="music" src="song/Area Zero - Pokémon Scarlet and Violet OST (Gamerip).mp3" preload="auto" loop></audio>
 
   <!-- Scripts -->
   <script src="script.js"></script>
