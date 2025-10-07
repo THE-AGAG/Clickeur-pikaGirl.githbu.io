@@ -80,7 +80,6 @@ const el = {
 };
 
 // --- Audio helpers: set sensible defaults and try to "unlock" audio on first user gesture ---
-// --- Audio helpers: set sensible defaults and try to "unlock" audio on first user gesture ---
 function unlockAudio() {
   const audios = [el.clickSound, el.critSound, el.achievementSound, el.music];
   audios.forEach(a => {
@@ -102,6 +101,63 @@ function unlockAudio() {
     }
   });
 }
+document.getElementById("startBtn").addEventListener("click", () => {
+  const music = document.getElementById("music");
+  const musicToggle = document.getElementById("musicToggle");
+
+  if (musicToggle.checked) {
+    music.play().catch(err => {
+      console.warn("Lecture automatique bloquée :", err);
+    });
+  }
+});
+document.addEventListener("click", tryPlayMusic, { once: true });
+document.addEventListener("keydown", tryPlayMusic, { once: true });
+
+function tryPlayMusic() {
+  const music = document.getElementById("music");
+  const musicToggle = document.getElementById("musicToggle");
+  if (musicToggle.checked) {
+    music.play().catch(err => console.warn("Lecture bloquée :", err));
+  }
+}
+const volumeSlider = document.getElementById("volumeSlider");
+const music = document.getElementById("music");
+
+// Appliquer le volume initial
+music.volume = volumeSlider.value / 100;
+
+// Mettre à jour le volume en temps réel
+volumeSlider.addEventListener("input", () => {
+  music.volume = volumeSlider.value / 100;
+});
+document.getElementById("startBtn").addEventListener("click", () => {
+  const music = document.getElementById("music");
+  const clickSound = document.getElementById("clickSound");
+  const critSound = document.getElementById("critSound");
+  const achievementSound = document.getElementById("achievementSound");
+
+  // Préparer les sons
+  [clickSound, critSound, achievementSound].forEach(sound => {
+    sound.volume = 0.5;
+    sound.play().then(() => sound.pause()); // Débloque l'audio
+  });
+
+  // Lancer la musique si activée
+  if (document.getElementById("musicToggle").checked) {
+    music.volume = document.getElementById("volumeSlider").value / 100;
+    music.play().catch(err => console.warn("Musique bloquée :", err));
+  }
+  if (state.soundOn) {
+  const sound = isCrit ? el.critSound : el.clickSound;
+  sound.currentTime = 0;
+  sound.play().catch(err => console.warn("Son bloqué :", err));
+  }
+  if (state.soundOn) {
+  el.achievementSound.currentTime = 0;
+  el.achievementSound.play().catch(err => console.warn("Son bloqué :", err));
+  }
+});
 
 // Startup
 el.startBtn.addEventListener("click", () => {
@@ -411,7 +467,7 @@ setInterval(() => {
   }
 }, 1000);
 
-// Random bonus button
+// Random bonus popup
 function scheduleBonusButton() {
   setTimeout(() => {
     el.bonusButton.style.display = "block";
@@ -421,15 +477,41 @@ function scheduleBonusButton() {
       el.bonusButton.style.display = "none";
       scheduleBonusButton();
     }, 5000);
-  }, 15000 + Math.random()*15000); // every 15-30s
+  }, 15000 + Math.random()*15000);
 }
 el.bonusButton.addEventListener("click", () => {
   const bonus = Math.floor(100 + Math.random()*900);
   state.score += bonus;
   if (state.timedActive) state.timedScore += bonus;
-  unlockAchievement(`🎁 Bonus attrapé: +${bonus}`);
+
+  el.bonusPopup.textContent = `🎁 Bonus reçu : +${bonus} points !`;
+  el.bonusPopup.style.display = "block";
+  setTimeout(() => el.bonusPopup.style.display = "none", 3000);
+
   updateUI();
 });
+// Random bonus function (used in interval as well)
+function randomBonus() {
+  const bonus = Math.floor(100 + Math.random() * 900);
+  state.score += bonus;
+  if (state.timedActive) state.timedScore += bonus;
+
+  el.bonusPopup.textContent = `🎁 Bonus reçu : +${bonus} points !`;
+  el.bonusPopup.style.display = "block";
+  setTimeout(() => el.bonusPopup.style.display = "none", 3000);
+
+  updateUI();
+}
+
+// Lancer un bonus toutes les 20 à 40 secondes
+setInterval(() => {
+  if (state.pseudo) { // seulement si un joueur est connecté
+    if (Math.random() < 0.5) { // 50% de chance
+      randomBonus();
+    }
+  }
+}, 20000);
+
 
 // Achievements
 function unlockAchievement(text) {
