@@ -1,3 +1,15 @@
+/*
+  FILE: style.css
+  GROUP: Styling / Theme
+
+  Notes:
+  - SAFE TO EDIT: color variables in :root (change --bg1, --bg2, --accent), spacing and font-size values,
+    sizes for #gameImage, .click-btn styles, and responsive breakpoints.
+  - SAFE TO ADD: new classes for skins/themes and small animations.
+  - CAUTION: don't remove or rename classes/IDs used by script (eg: .sound-controls, #gameImage, #particlesCanvas,
+    #clickZone, .cps-indicator) unless you also update `script.js`.
+*/
+
 :root {
   --bg1: #6e8efb;
   --bg2: #a777e3;

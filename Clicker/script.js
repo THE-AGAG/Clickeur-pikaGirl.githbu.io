@@ -1,3 +1,26 @@
+/*
+  FILE: script.js
+  GROUP: Game logic / UI wiring / Persistence
+
+  High-level groups inside this file:
+  - state (initial values and defaults)
+  - DOM selectors (const el)
+  - Audio helpers and volume controls
+  - Game mechanics (click handling, purchases, prestige)
+  - UI rendering and persistence (updateUI, persist/load)
+
+  SAFE TO EDIT (low risk):
+  - values in `state` for tuning gameplay (costs, multiplier, critChance, critPower, prestigeCost)
+  - `SKINS` array (add/remove skins with local paths)
+  - `volumes` default map (initial volume levels)
+  - CSS classes and text in `index.html` (see index.html header for exact ids)
+
+  CAUTION (make changes only if you know what you do):
+  - ids in `el` map (these are referenced heavily throughout the script)
+  - persistence keys and shape stored in `localStorage` (persist()/loadPersisted())
+  - async audio playing / unlock logic (autoplay policies)
+
+*/
 // Main state
 const state = {
   pseudo: "",
@@ -99,6 +122,10 @@ const volumes = {
   crit: 0.5,
   achievement: 0.25,
 };
+/*
+  SAFE TO EDIT: change defaults above (volumes, SKINS, state costs) to tune the game.
+  EXAMPLE: set state.multiplierCost = 2000 to increase initial mult cost.
+*/
 
 // --- Audio helpers: set sensible defaults and try to "unlock" audio on first user gesture ---
 function unlockAudio() {
@@ -573,6 +600,8 @@ el.clickButton.addEventListener("click", () => {
   // Click speed: image change + dynamic background
   // Click speed thresholds (ms):
   // fast: <=100ms (10+ cps), medium: 101-167ms (~6-10 cps), base: >167ms (1-6 cps)
+    // SAFE TO EDIT: adjust thresholds below to change CPS classification
+    // ex: set fast threshold to 120 to make 'fast' easier to reach.
   if (diff <= 100) {
     el.gameImage.src = themeAsset("fast");
     el.gameImage.style.transform = "scale(1.2)";
@@ -960,6 +989,11 @@ function themeAsset(kind) {
   };
   return map[t][kind] || map.default.base;
 }
+/*
+  SAFE TO EDIT: themeAsset map
+  - You can change the 'base', 'medium', 'fast' paths per theme to use different images.
+  - Keep the same keys ('base','medium','fast') because code references themeAsset('fast'|'medium'|'base').
+*/
 
 // Utility: format numbers with spaces as thousands separators for readability
 function formatNumber(n) {
@@ -976,6 +1010,7 @@ function computeAndDisplayCPS() {
   const elC = document.querySelector('.cps-indicator');
   if (elC) elC.textContent = `CPS: ${cps}`;
   // achievements: if CPS high
+  // SAFE TO EDIT: CPS achievement threshold
   if (cps >= 12) unlockAchievement('⚡ Frenzy: 12 CPS atteint !');
 }
 setInterval(computeAndDisplayCPS, 250);
@@ -1067,6 +1102,10 @@ clearAllScores();
 
 // Persistence
 function persist() {
+  // NOTE: This writes the `clickerState` object into localStorage.
+  // SAFE TO EDIT: you can add/remove simple scalar fields here (numbers, strings, booleans).
+  // CAUTION: removing or renaming keys will break restore logic and older saves. If you change keys,
+  // update `loadPersisted()` to handle migrations.
   localStorage.setItem("clickerState", JSON.stringify({
     pseudo: state.pseudo,
     score: state.score,
@@ -1116,6 +1155,7 @@ function loadPersisted() {
   if (!data) return;
   try {
     const s = JSON.parse(data);
+    // Merge saved data into current state. Safe to add new fields in future releases.
     Object.assign(state, s);
       // Restore achievements list
     el.achievementList.innerHTML = "";
@@ -1131,7 +1171,8 @@ function loadPersisted() {
     setTheme(state.theme || "default");
     // Ensure prestigeCost present
     if (!state.prestigeCost) state.prestigeCost = 20000;
-    // restore volumes and audio element volumes
+  // restore volumes and audio element volumes
+  // SAFE TO EDIT: If you change the persisted schema, add migration code here to support older saves.
     if (s.volumes) {
       Object.assign(volumes, s.volumes);
       try { if (el.music) el.music.volume = volumes.music; } catch (e) {}
